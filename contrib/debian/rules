@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+# -*- mode: makefile; coding: utf-8 -*-
+
+DEB_INSTALL_EXAMPLES_NUMIVd += debian/examples/*
+DEB_INSTALL_MANPAGES_NUMIVd += debian/manpages/*
+
+%:
+	dh --with bash-completion $@
+
+override_dh_auto_build:
+	cd src; $(MAKE) -f makefile.unix NUMIVd USE_ASM=1 USE_LEVELDB=1
+	$(MAKE)
+
+override_dh_auto_clean:
+	if [ -f Makefile ]; then $(MAKE) clean; else rm -rf build/; rm -f NUMIV-qt; fi
+	cd src; $(MAKE) -f makefile.unix clean
+
+override_dh_auto_configure:
+	qmake NUMIV-qt.pro USE_ASM=1 USE_LEVELDB=1
+
+# Ensure wrapper is set executable
+binary-post-install/NUMIVd:
+	chmod +x $(cdbs_curdestdir)usr/bin/NUMIVd
+binary-post-install/NUMIV-qt:
+	chmod +x $(cdbs_curdestdir)usr/bin/NUMIV-qt

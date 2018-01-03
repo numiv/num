@@ -1,0 +1,68 @@
+#!/bin/sh
+
+# PROVIDE: NUMIV
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+
+#
+# Add the following lines to /etc/rc.conf.local or /etc/rc.conf
+# to enable this service:
+#
+# NUMIV_enable (bool): Set to NO by default. Set this variable to YES if you want to enable NUMIV service.
+# NUMIV_config (path): Set to /usr/local/etc/NUMIV.conf by default.
+# NUMIV_user:  The user account NUMIV daemon runs as. It uses 'root' user by default.
+# NUMIV_group: The group account NUMIV daemon runs as. It uses 'wheel' group by default.
+# NUMIV_datadir (str): Default to "/var/db/NUMIV". Base data directory.
+
+. /etc/rc.subr
+
+name=NUMIV
+rcvar=NUMIV_enable
+
+: ${NUMIV_enable:=NO}
+: ${NUMIV_config=/usr/local/etc/NUMIV.conf}
+: ${NUMIV_datadir=/var/db/NUMIV}
+: ${NUMIV_user="root"}
+: ${NUMIV_group="wheel"}
+
+required_files=${NUMIV_config}
+command=/usr/local/bin/NUMIVd
+NUMIV_chdir=${NUMIV_datadir}
+pidfile="${NUMIV_datadir}/NUMIVd.pid"
+stop_cmd=NUMIV_stop
+command_args="-conf=${NUMIV_config} -datadir=${NUMIV_datadir} -daemon -pid=${pidfile}"
+start_precmd="${name}_prestart"
+
+NUMIV_create_datadir()
+{
+	echo "Creating data directory"
+	eval mkdir -p ${NUMIV_datadir}
+	[ $? -eq 0 ] && chown -R ${NUMIV_user}:${NUMIV_group} ${NUMIV_datadir}
+}
+
+NUMIV_prestart()
+{
+	if [ ! -d "${NUMIV_datadir}/." ]; then
+		NUMIV_create_datadir || return 1
+	fi
+}
+
+NUMIV_requirepidfile()
+{
+	if [ ! "0`check_pidfile ${pidfile} ${command}`" -gt 1 ]; then
+		echo "${name} not running? (check $pidfile)."
+		exit 1
+	fi
+}
+
+NUMIV_stop()
+{
+    NUMIV_requirepidfile
+
+	echo "Stopping ${name}."
+	eval ${command} -conf=${NUMIV_config} -datadir=${NUMIV_datadir} stop
+	wait_for_pids ${rc_pid}
+}
+
+load_rc_config $name
+run_rc_command "$1"

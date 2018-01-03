@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=NUMIV
+Comment=NUMIV P2P Cryptocurrency
+Comment[ru]=NUMIV, P2P криптовалюта
+Comment[fr]=NUMIV, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=NUMIV, eşten eşe kriptografik sanal para birimi
+Exec=/usr/bin/NUMIV-qt
+Terminal=false
+Type=Application
+Icon=/usr/share/pixmaps/NUMIV80.xpm
+MimeType=x-scheme-handler/NUMIV;
+Categories=Office;

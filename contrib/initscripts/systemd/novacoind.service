@@ -1,0 +1,11 @@
+[Unit]
+Description=NUMIV daemon serivce
+After=network.target
+
+[Service]
+Type=simple
+User=NUMIV
+ExecStart=/opt/NUMIV/NUMIVd
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,5 @@
+NUMIV-qt usr/bin
+share/pixmaps/NUMIV32.xpm usr/share/pixmaps
+share/pixmaps/NUMIV80.xpm usr/share/pixmaps
+debian/NUMIV-qt.desktop usr/share/applications
+debian/NUMIV-qt.protocol usr/share/kde4/services/
